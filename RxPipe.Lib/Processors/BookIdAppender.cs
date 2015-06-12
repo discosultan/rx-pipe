@@ -1,21 +1,22 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using RxPipe.Lib.Models;
 using RxPipe.Lib.Utilities;
 
 namespace RxPipe.Lib.Processors
 {
     /// <summary>
-    /// Capitalizes titles for <see cref="Book"/>s.
+    /// Appends unique identificators for <see cref="Book"/>s.
     /// </summary>
-    public class BookTitleCapitalizer : IPipeProcessor<Book>
+    public class BookIdAppender : IPipeProcessor<Book>
     {
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Constructs a new instance of <see cref="BookTitleCapitalizer"/>.
+        /// Constructs a new instance of <see cref="BookIdAppender"/>.
         /// </summary>
         /// <param name="logger">An <see cref="ILogger"/> for logging process status.</param>
-        public BookTitleCapitalizer(ILogger logger)
+        public BookIdAppender(ILogger logger)
         {
             _logger = logger;
         }
@@ -24,9 +25,9 @@ namespace RxPipe.Lib.Processors
         public async Task<Book> ProcessAsync(Book item)
         {
             // Simulate long running task.
-            await Task.Delay(3000);
-            item.Title = item.Title.ToUpper();
-            _logger.Write($"Capitalized title for {item.Title}.");
+            await Task.Delay(1000);
+            item.Id = Guid.NewGuid();
+            _logger.Write($"Appended id {item.Id} to {item.Title}.");
             return item;
         }
     }

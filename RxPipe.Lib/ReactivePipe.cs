@@ -1,20 +1,30 @@
 ﻿using System;
-using System.Reactive;
+using System.Linq;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using RxPipe.Lib.Models;
 using RxPipe.Lib.Processors;
 using RxPipe.Lib.Providers;
 using RxPipe.Lib.Utilities;
 
 namespace RxPipe.Lib
 {
+    /// <summary>
+    /// Provides push-based processing pipeline.
+    /// </summary>
+    /// <typeparam name="T">Type of items coming through the pipe.</typeparam>
+    /// <remarks>    
+    /// input > [ processor 1 > processor 2 > ... > processor n ] > output
+    /// </remarks>
     public class ReactivePipe<T>
     {
         private readonly IPipeProvider<T> _provider;
         private readonly IPipeProcessor<T>[] _processors;
 
+        /// <summary>
+        /// Constructs a new instance of <see cref="ReactivePipe{T}"/>.
+        /// </summary>
+        /// <param name="provider">Provider for providing items for the pipe.</param>
+        /// <param name="processors">Processors for processing items flowing through the pipe.</param>
         public ReactivePipe(IPipeProvider<T> provider, params IPipeProcessor<T>[] processors)
         {
             Guard.NotNull(provider, nameof(provider));
@@ -23,18 +33,23 @@ namespace RxPipe.Lib
             _processors = processors;
         }
 
-        public IObservable<T> Process()
+        /// <summary>
+        /// Processed item provision.
+        /// </summary>
+        /// <returns>Cold observable.</returns>
+        public IObservable<T> WhenProcessed()
         {
-            return Observable.Create<T>(async observer =>
+            return _provider.WhenProvided().Select(x =>
             {
-                await _provider.GetAll().Do(async item =>
-                {
-                    foreach (IPipeProcessor<T> processor in _processors)
-                        item = await processor.ProcessAsync(item);
-                    
-                    observer.OnNext(item);
+                return Observable.FromAsync(() =>
+                {                    
+                    return _processors.Aggregate(
+                        seed: Task.FromResult(x), 
+                        func: (current, processor) => current.ContinueWith( // Append continuations.
+                            previousTask => processor.ProcessAsync(previousTask.Result))
+                            .Unwrap()); // We need to unwrap Task{T} from Task{Task{T}}.
                 });
-            });
+            }).Concat();
         }
     }
 }
