@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using RxPipe.Lib.Models;
 using RxPipe.Lib.Processors;
 using RxPipe.Lib.Providers;
 using RxPipe.Lib.Utilities;
@@ -21,35 +23,8 @@ namespace RxPipe.Lib
 
         public IObservable<T> Process()
         {
-            //return _provider.GetAll().Do(async item =>
-            //{
-            //    foreach (IPipeProcessor<T> processor in _processors)
-            //    {
-            //        item = await processor.ProcessAsync(item);
-            //    }
-            //});
-
-            return Observable.Create<T>(async observer =>
-            {
-                await _provider.GetAll().Do(async item =>
-                {
-                    foreach (IPipeProcessor<T> processor in _processors)
-                    {
-                        item = await processor.ProcessAsync(item);
-                    }
-                    observer.OnNext(item);
-                });
-            });
-
-            //return _provider.GetAll().Select<T,T>(async article =>
-            //{
-            //    Task<T> articleTask;
-            //    foreach (IPipeProcessor<T> processor in _processors)
-            //    {
-            //        articleTask = articleTask.ContinueWith(async article => processor.ProcessAsync(article);
-            //    }
-            //    return article;                
-            //});
+            // TODO: Implement.
+            return _provider.GetAll();
         }
     }
 }
