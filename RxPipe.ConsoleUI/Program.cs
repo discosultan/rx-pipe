@@ -15,7 +15,8 @@ namespace RxPipe.ConsoleUI
                 new FakeBookProvider(),
                 new BookTitleCapitalizer());            
 
-            Console.WriteLine("Starting to process books.");
+            Console.WriteLine("Starting to process books.");            
+            Console.WriteLine();
 
             pipe.Process().Subscribe(Observer.Create<Book>(
                 onNext: article =>
@@ -27,8 +28,7 @@ namespace RxPipe.ConsoleUI
                     Console.WriteLine();
                     Console.WriteLine("Finished processing all the books.");
                 }));
-
-            Console.WriteLine("Press any key to exit...");
+            
             Console.ReadKey();
         }        
     }
