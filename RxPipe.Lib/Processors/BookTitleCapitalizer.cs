@@ -24,7 +24,7 @@ namespace RxPipe.Lib.Processors
         public async Task<Book> ProcessAsync(Book item)
         {
             // Simulate long running task.
-            await Task.Delay(3000);
+            await Task.Delay(1000);
             item.Title = item.Title.ToUpper();
             _logger.Write($"Capitalized title for {item.Title}.");
             return item;

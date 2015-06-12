@@ -39,17 +39,17 @@ namespace RxPipe.Lib
         /// <returns>Cold observable.</returns>
         public IObservable<T> WhenProcessed()
         {
-            return _provider.WhenProvided().Select(x =>
+            return _provider.WhenProvided().SelectMany(x =>
             {
                 return Observable.FromAsync(() =>
-                {                    
+                {
                     return _processors.Aggregate(
-                        seed: Task.FromResult(x), 
+                        seed: Task.FromResult(x),
                         func: (current, processor) => current.ContinueWith( // Append continuations.
                             previousTask => processor.ProcessAsync(previousTask.Result))
                             .Unwrap()); // We need to unwrap Task{T} from Task{Task{T}}.
                 });
-            }).Concat();
+            });
         }
     }
 }
