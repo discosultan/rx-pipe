@@ -29,7 +29,7 @@ namespace RxPipe.ConsoleUI
 
             Console.WriteLine("Starting to process books. Press any key to exit...\n");         
 
-            pipe.WhenProcessed().Subscribe(Observer.Create<Book>(
+            pipe.WhenProcessed().Subscribe(
                 onNext: book =>
                 {
                     WriteSync($"\nFinished processing {book.Title}.\n");                    
@@ -37,7 +37,7 @@ namespace RxPipe.ConsoleUI
                 onCompleted: () =>
                 {
                     WriteSync("Finished processing all the books.");
-                }));
+                });
             
             Console.ReadKey();            
         }
