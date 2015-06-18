@@ -27,7 +27,7 @@ namespace RxPipe.Lib.Providers
         public IObservable<Book> WhenProvided()
         {            
             return Observable.Create<Book>(
-                async observable =>
+                async observer =>
                 {
                     Queue<Book> books = QueueFakeBooks();
                     while (books.Count > 0)
@@ -36,7 +36,7 @@ namespace RxPipe.Lib.Providers
                         await Task.Delay(1000);
                         Book book = books.Dequeue();
                         _logger.Write($"Provided {book.Title}.");
-                        observable.OnNext(book);
+                        observer.OnNext(book);
                     }
                 });
         }
