@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using RxPipe.Lib.Models;
 using RxPipe.Lib.Utilities;
@@ -13,6 +11,13 @@ namespace RxPipe.Lib.Providers
     public class FakeBookProvider : IPipeProvider<Book>
     {
         private readonly ILogger _logger;
+        private readonly Queue<Book> _books = new Queue<Book>(new []
+        {
+            new Book {Title = "Tom Sawyer"},
+            new Book {Title = "Harry Potter"},
+            new Book {Title = "Hunger Games"},
+            new Book {Title = "The Song of Ice and Fire"}
+        });
 
         /// <summary>
         /// Constructs a new instance of <see cref="FakeBookProvider"/>.
@@ -23,32 +28,15 @@ namespace RxPipe.Lib.Providers
             _logger = logger;
         }
 
-        /// <inheritdoc />
-        public IObservable<Book> WhenProvided()
-        {            
-            return Observable.Create<Book>(
-                async observer =>
-                {
-                    Queue<Book> books = QueueFakeBooks();
-                    while (books.Count > 0)
-                    {
-                        // Simulate long running task.
-                        await Task.Delay(1000);
-                        Book book = books.Dequeue();
-                        _logger.Write($"Provided {book.Title}.");
-                        observer.OnNext(book);
-                    }
-                });
-        }
+        public bool HasNext => _books.Count > 0;
 
-        private static Queue<Book> QueueFakeBooks()
+        public async Task<Book> GetNextAsync()
         {
-            return new Queue<Book>(new []
-            {
-                new Book {Title = "Tom Sawyer"},
-                new Book {Title = "Harry Potter"},
-                new Book {Title = "Hunger Games"}
-            });
+            // Simulate long running task.
+            await Task.Delay(1000);
+            var book = _books.Dequeue();
+            _logger.Write($"Provided {book.Title}.");
+            return book;
         }
     }
 }

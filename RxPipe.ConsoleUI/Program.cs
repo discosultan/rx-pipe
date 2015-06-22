@@ -20,6 +20,7 @@ namespace RxPipe.ConsoleUI
             ILogger logger = new ConsoleLogger(_syncRoot) { Color = ConsoleColor.Green };
 
             var pipe = new ReactivePipe<Book>(
+                PipeSettings.Default,
                 new FakeBookProvider(logger), // Provider.
                 new BookTitleCapitalizer(logger), // 1st processor.
                 new BookIdAppender(logger)); // 2nd processor.
@@ -27,12 +28,12 @@ namespace RxPipe.ConsoleUI
             Console.WriteLine("Welcome to Contoso book processing pipeline. Press any key to start...\n");
             Console.ReadKey(true);
 
-            Console.WriteLine("Starting to process books. Press any key to exit...\n");         
+            Console.WriteLine("Starting to process books. Press any key to exit...\n");
 
             pipe.WhenProcessed().Subscribe(
                 onNext: book =>
                 {
-                    WriteSync($"\nFinished processing {book.Title}.\n");                    
+                    WriteSync($"\nFinished processing {book.Title}.\n");
                 },
                 onCompleted: () =>
                 {

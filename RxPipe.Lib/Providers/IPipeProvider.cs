@@ -1,4 +1,4 @@
-using System;
+using System.Threading.Tasks;
 
 namespace RxPipe.Lib.Providers
 {
@@ -7,12 +7,14 @@ namespace RxPipe.Lib.Providers
     /// provider is to fetch items into the pipe.
     /// </summary>
     /// <typeparam name="T">Type of items to fetch.</typeparam>
-    public interface IPipeProvider<out T>
+    public interface IPipeProvider<T>
     {
+        bool HasNext { get; }
+
         /// <summary>
         /// Item provision.
         /// </summary>
         /// <returns>Cold observable.</returns>
-        IObservable<T> WhenProvided();
+        Task<T> GetNextAsync();
     }
 }
