@@ -2,8 +2,6 @@
 
 Sample for solving the 'async yield' issue using .NET Reactive Extensions. The project is using C# 6 features and targets .NET framework 4.6.
 
-![Pipeline](http://az695587.vo.msecnd.net/images/rx-pipe.PNG)
-
 ## Assemblies
 
 - **RxPipe.Lib**: Core library providing a reactive pipeline for processing Contoso library books.
