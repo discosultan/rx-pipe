@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 using RxPipe.Lib;
 using RxPipe.Lib.Models;
 using RxPipe.Lib.Processors;
@@ -16,7 +15,7 @@ namespace RxPipe.ConsoleUI
         static readonly object _syncRoot = new object();
 
         static void Main(string[] args)
-        {            
+        {
             ILogger logger = new ConsoleLogger(_syncRoot) { Color = ConsoleColor.Green };
 
             var pipe = new ReactivePipe<Book>(
@@ -40,7 +39,7 @@ namespace RxPipe.ConsoleUI
                     WriteSync("Finished processing all the books.");
                 });
             
-            Console.ReadKey();            
+            Console.ReadKey();
         }
 
         static void WriteSync(string entry)

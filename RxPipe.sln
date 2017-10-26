@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RxPipe.Lib", "RxPipe.Lib\RxPipe.Lib.csproj", "{B97C33E5-9FB5-4564-A406-0D69D606DD50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RxPipe.ConsoleUI", "RxPipe.ConsoleUI\RxPipe.ConsoleUI.csproj", "{A9A58F6E-6324-41C6-8ED4-A5A3EE9B6EBB}"

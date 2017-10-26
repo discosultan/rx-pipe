@@ -15,7 +15,7 @@ namespace RxPipe.Lib
     /// Provides push-based processing pipeline.
     /// </summary>
     /// <typeparam name="T">Type of items coming through the pipe.</typeparam>
-    /// <remarks>    
+    /// <remarks>
     /// input > [ processor 1 > processor 2 > ... > processor n ] > output
     /// </remarks>
     public class ReactivePipe<T>
@@ -45,9 +45,9 @@ namespace RxPipe.Lib
         /// <returns>Cold observable.</returns>
         public IObservable<T> WhenProcessed()
         {
-            var semaphore = new OptionalSemaphore(
-                count: _settings.MaxNumParallelProcessings,
-                timeout: _settings.WaitForProviderMs);
+            var semaphore = _settings.IsLimited
+                ? new SemaphoreSlim(_settings.MaxNumParallelProcessings)
+                : null;
 
             return Observable.Create<T>(observer =>
             {
@@ -56,12 +56,7 @@ namespace RxPipe.Lib
                 {
                     while (_provider.HasNext && !cancel.Token.IsCancellationRequested)
                     {
-                        if (_settings.MaxNumParallelProcessings != Timeout.Infinite && !semaphore.WaitOne())
-                        {
-                            observer.OnError(new TimeoutException(
-                                $"Thread {Thread.CurrentThread.ManagedThreadId} timed out after {_settings.WaitForProviderMs} ms waiting for provider."));
-                            break;
-                        }                        
+                        await semaphore?.WaitAsync();
                         T item = await _provider.GetNextAsync();
                         observer.OnNext(item);
                     }
@@ -73,7 +68,10 @@ namespace RxPipe.Lib
                     seed: Task.FromResult(item),
                     func: (current, processor) => current.ContinueWith( // Append continuations.
                         previous => processor.ProcessAsync(previous.Result)).Unwrap()) // We need to unwrap Task{T} from Task{Task{T}};
-            ).Finally(() => semaphore.Release()));
+            ).Finally(() =>
+            {
+                semaphore?.Release();
+            }));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace RxPipe.ConsoleUI
 {
     public class ConsoleLogger : ILogger
     {
-        private readonly object _syncRoot;        
+        private readonly object _syncRoot;
 
         public ConsoleLogger(object syncRoot)
         {

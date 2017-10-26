@@ -1,16 +1,14 @@
-﻿using System.Threading;
-
-namespace RxPipe.Lib
+﻿namespace RxPipe.Lib
 {
     public struct PipeSettings
     {
         public int MaxNumParallelProcessings { get; set; }
-        public int WaitForProviderMs { get; set; }
+
+        public bool IsLimited => MaxNumParallelProcessings > 0;
 
         public static PipeSettings Default => new PipeSettings
         {
-            WaitForProviderMs = Timeout.Infinite,
-            MaxNumParallelProcessings = Timeout.Infinite
+            MaxNumParallelProcessings = 2
         };
     }
 }
