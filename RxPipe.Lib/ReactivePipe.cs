@@ -68,10 +68,7 @@ namespace RxPipe.Lib
                     seed: Task.FromResult(item),
                     func: (current, processor) => current.ContinueWith( // Append continuations.
                         previous => processor.ProcessAsync(previous.Result)).Unwrap()) // We need to unwrap Task{T} from Task{Task{T}};
-            ).Finally(() =>
-            {
-                semaphore?.Release();
-            }));
+            ).Finally(() => semaphore?.Release()));
         }
     }
 }
